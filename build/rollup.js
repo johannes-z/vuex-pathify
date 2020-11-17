@@ -4,9 +4,9 @@
 
 import path from 'path'
 import license from 'rollup-plugin-license'
-import commonjs from 'rollup-plugin-commonjs'
-import uglify from 'rollup-plugin-uglify'
-import buble from 'rollup-plugin-buble'
+import commonjs from '@rollup/plugin-commonjs'
+import { terser } from 'rollup-plugin-terser'
+import buble from '@rollup/plugin-babel'
 
 const pkg = require('../package.json')
 const external = Object.keys(pkg.dependencies || {})
@@ -33,7 +33,9 @@ const umd = {
   plugins: [
     license({
       banner: {
-        file: path.join(__dirname, 'banner.txt')
+        content: {
+          file: path.join(__dirname, 'banner.txt')
+        }
       },
     }),
     commonjs(),
@@ -43,7 +45,7 @@ const umd = {
 
 const min = Object.assign({}, umd, {
   output: output('min.js'),
-  plugins: [...umd.plugins, uglify()]
+  plugins: [...umd.plugins, terser()]
 })
 
 const es = Object.assign({}, umd, {
